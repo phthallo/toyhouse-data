@@ -1,10 +1,10 @@
 # Toyhouse Character Checker
-[work in progress] A Toyhouse service to retrieve your OCs and compare them with another user's favourited OCs. 
+[work in progress] A Toyhouse service to retrieve data about your (and other people's) OCs.
 
 This is very much a niche project (lol), but I'm making this to automate the process - since it's quite tedious going through 20+ (or more) pages of another user's favourite characters if I'm trying to see whether my OCs are there.
 
 ## Prerequisites
-- Python
+- [Python3](https://www.python.org/downloads/)
 - [Requests](https://pypi.org/project/requests/)
 - [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/)
 
@@ -35,6 +35,10 @@ Doing so should print a list containing the names of your characters and IDs in 
 
 ## To-Do List
 - [x] Retrieve own characters (and ID) 
+
+- [ ] Retrieve list of users who have favourited individual characters (by ID)
+
+- [ ] Retrieve stats? (favourites/favourite amount - comments/comment amount - ownership log)
 
 - [ ] Retrieve other users' favourite characters, ID, and folders/subfolders/page they are located on. 
 
