@@ -13,7 +13,7 @@ This is very much a niche project (lol), but I'm making this to automate the pro
 Start by importing the module, then instantiating the class with your Toyhou.se username and password. 
 You will then need to authenticate yourselves to log in on that session. This is required, as many profiles/characters are inaccessible to guest users. 
 
-```
+```python
 from ToyhouseSession import ToyhouseSession
 session = ToyhouseSession("username", "password")
 session.auth()
@@ -21,21 +21,25 @@ session.auth()
 
 Right now, the only other thing you can do is retrieve your own characters. 
 
-```
+```python
 characters = session._retrieve_char()
 print(characters)
 ```
 
-Doing so should print a list containing the names of your characters and IDs in the default order that your characters are sorted in, usually alphabetical order e.g:
+Doing so should print a list containing the names of your characters and IDs in the default order that your characters are sorted in (which is alphabetical order, given that we're only looking in `folder:all`) e.g:
 
-```
+```python
 [('Ashclaw', 4717***), ('Cosmos', 7092***), ('Dakota', 565***), ('July', 7955***)] 
 ```
 
 
 ## To-Do List
-[x] Retrieve own characters (and ID) 
-[ ] Retrieve other users' favourite characters, ID, and folders/subfolders/page they are located on. 
-[ ] Compare characters and return list of every character + location found.
-[ ] Test on profiles with custom CSS
-[ ] Add better ways to catch errors (e.g user has no characters, login credentials incorrect)
+- [x] Retrieve own characters (and ID) 
+
+- [ ] Retrieve other users' favourite characters, ID, and folders/subfolders/page they are located on. 
+
+- [ ] Compare characters and return list of every character + location found.
+
+- [ ] Test on profiles with custom CSS
+
+- [ ] Add better ways to catch errors (e.g user has no characters, login credentials incorrect)
