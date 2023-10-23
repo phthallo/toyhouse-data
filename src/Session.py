@@ -36,7 +36,7 @@ class Session:
         self.session.post("https://toyhou.se/~account/login", data=creds)
         return "Attempting to authenticate as " + self.username
         
-    def _retrieve_char(self):
+    def retrieve_char(self):
         """
         Retrieves the logged-in user's characters and returns a list containing tuples of form `(charactername, characterID)`.
         """
@@ -61,7 +61,7 @@ class Session:
             raise Exception("ParseError: Parsing was unsuccessful. Please verify that your login credentials are correct.")
         return self.characters
     
-    def _retrieve_stats(self):
+    def retrieve_stats(self):
         """
         Retrieves the logged-in user's statistics and username log. Even though some can be hidden, all statistics are visible (provided you are viewing your own profile.)
         """

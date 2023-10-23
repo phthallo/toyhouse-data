@@ -14,15 +14,15 @@ Start by importing the module, then instantiating the class with your Toyhou.se 
 You will then need to authenticate yourselves to log in on that session. This is required, as many profiles/characters are inaccessible to guest users. 
 
 ```python
-from Session import eSession
+from Session import Session
 session = Session("username", "password")
 session.auth()
 ```
 
-You can retrieve a list of your characters and their corresponding IDs by calling `_retrieve_char()`. 
+You can retrieve a list of your characters and their corresponding IDs by calling `retrieve_char()`. 
 
 ```python
-characters = session._retrieve_char()
+characters = session.retrieve_char()
 print(characters)
 ```
 
@@ -40,15 +40,28 @@ character_favourites = Character(4717***, session) # We log in with our pre-exis
 
 ```
 
-Another thing we can do with `Session()` is obtain the logged-in user's statistics, as visible from the `/stats` page. 
+Another thing we can do with `Session()` is obtain the logged-in user's statistics, as visible from the `toyhou.se/<username>/stats` page (even if they are hidden from the public) 
 ```python
-statistics = session._retrieve_stats()
+statistics = session.retrieve_stats()
 print(statistics)
 ```
 
-This returns a dictionary, letting you access the value using the statistic attribute name as a key.
+This outputs a dictionary, letting you access the value using the statistic attribute name as a key.
 ```python
-{'Time Registered': '22 Mar 2019, *:**:** am', 'Last Logged In': '22 Oct 2023, *:**:** pm', 'Invited By': '*****', 'Character Count': '***', 'Images Count': '***', 'Literatures Count': '***', 'Words Count': '**', 'Forum Posts Count': '***', 'Subscribed To...': '*** users', 'Subscribed To By...': '*** users', 'Authorizing...': '***', 'Authorized By...': '***'}
+{ #dict containing arbitrary values
+    'Time Registered': '22 Mar 2019, *:**:** am', 
+    'Last Logged In': '22 Oct 2023, *:**:** pm', 
+    'Invited By': '*****', 
+    'Character Count': '25', 
+    'Images Count': '323', 
+    'Literatures Count': '1', 
+    'Words Count': '233', 
+    'Forum Posts Count': '157', 
+    'Subscribed To...': '2 users', 
+    'Subscribed To By...': '46 users', 
+    'Authorizing...': '1', 
+    'Authorized By...': '3'
+    }
 ```
 
 ## To-Do List

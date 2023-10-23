@@ -22,12 +22,12 @@ class Character:
         self.favs = []
         self.comments = []
 
-    def _retrieve_char_stats(self):
+    def retrieve_char_stats(self):
         """
         Obtains information such as character designer, date of creation and ownership log.
         """
 
-    def _retrieve_favs(self):
+    def retrieve_favs(self):
         """
         Obtains a list of who favourited the character.
         """
@@ -36,7 +36,7 @@ class Character:
             self.favs.append(favourite.text)
         return self.favs
 
-    def _retrieve_comments(self):
+    def retrieve_comments(self):
         """
         Obtains a list of comments, timestamps and their authors.
         """
