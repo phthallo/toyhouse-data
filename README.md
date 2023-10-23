@@ -14,12 +14,12 @@ Start by importing the module, then instantiating the class with your Toyhou.se 
 You will then need to authenticate yourselves to log in on that session. This is required, as many profiles/characters are inaccessible to guest users. 
 
 ```python
-from ToyhouseSession import ToyhouseSession
-session = ToyhouseSession("username", "password")
+from Session import eSession
+session = Session("username", "password")
 session.auth()
 ```
 
-Right now, the only other thing you can do is retrieve your own characters. 
+You can retrieve a list of your characters and their corresponding IDs by calling `_retrieve_char()`. 
 
 ```python
 characters = session._retrieve_char()
@@ -32,13 +32,31 @@ Doing so should print a list containing the names of your characters and IDs in 
 [('Ashclaw', 4717***), ('Cosmos', 7092***), ('Dakota', 565***), ('July', 7955***)] 
 ```
 
+With these IDs, you can retrieve a list of the people who favourited that specific character, sorted in default order (which is descending via data favourited)
+```python
+character_favourites = Character(4717***, session) # We log in with our pre-existing session to retrieve information about the character Ashclaw.
+# returns
+['username', 'another username', 'a third username']
+
+```
+
+Another thing we can do with `Session()` is obtain the logged-in user's statistics, as visible from the `/stats` page. 
+```python
+statistics = session._retrieve_stats()
+print(statistics)
+```
+
+This returns a dictionary, letting you access the value using the statistic attribute name as a key.
+```python
+{'Time Registered': '22 Mar 2019, *:**:** am', 'Last Logged In': '22 Oct 2023, *:**:** pm', 'Invited By': '*****', 'Character Count': '***', 'Images Count': '***', 'Literatures Count': '***', 'Words Count': '**', 'Forum Posts Count': '***', 'Subscribed To...': '*** users', 'Subscribed To By...': '*** users', 'Authorizing...': '***', 'Authorized By...': '***'}
+```
 
 ## To-Do List
 - [x] Retrieve own characters (and ID) 
 
-- [ ] Retrieve list of users who have favourited individual characters (by ID)
+- [x] Retrieve list of users who have favourited individual characters (by ID)
 
-- [ ] Retrieve stats? (favourites/favourite amount - comments/comment amount - ownership log)
+- [ ] Retrieve stats? (~~favourites/favourite amount~~ - comments/comment amount - ownership log)
 
 - [ ] Retrieve other users' favourite characters, ID, and folders/subfolders/page they are located on. 
 

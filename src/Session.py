@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
+from utilities import scrape
 
-class ToyhouseSession:
+class Session:
     """
-    Establishes a new Toyhou.se session.
+    Establishes a new Toyhou.se session for information about the authenticated user.
     """
     def __init__(self,username,password):
         """
@@ -13,10 +14,13 @@ class ToyhouseSession:
         username (str): Toyhou.se username
         password (str): Toyhou.se password
         """
-        self.session = requests.session()
+        self.session = requests.Session()
+        self.session.verify = False
         self.username = username
         self.password = password
         self.characters = []
+        self.stats = []
+        self.stat_values = []
 
     def auth(self):
         """
@@ -36,6 +40,8 @@ class ToyhouseSession:
         """
         Retrieves the logged-in user's characters and returns a list containing tuples of form `(charactername, characterID)`.
         """
+        if self.session is None:
+            raise Exception("AuthenticationError: You must be logged in to retrieve characters!")
         try:
             retrieve_url = self.session.get(f"https://toyhou.se/{self.username}/characters/folder:all")
             try:
@@ -43,9 +49,7 @@ class ToyhouseSession:
             except:
                 max_pages = 1
             for i in range(1, int(max_pages)+1):
-                retrieve_url = self.session.get(f"https://toyhou.se/{self.username}/characters/folder:all?legacy=0&page={i}")
-                retrieve_lxml = BeautifulSoup(retrieve_url.content, features="lxml")
-                retrieve_characters = retrieve_lxml.find_all("a", {"class": "btn btn-sm btn-primary character-name-badge"})
+                retrieve_characters = scrape(self.session, f"https://toyhou.se/{self.username}/characters/folder:all?legacy=0&page={i}","a", {"class": "btn btn-sm btn-primary character-name-badge"})
                 for character in retrieve_characters:
                     self.characters.append(
                         (
@@ -54,7 +58,20 @@ class ToyhouseSession:
                             )
                             )
         except: 
-            raise Exception("Parsing was unsuccessful. Please verify that your login credentials are correct.")
+            raise Exception("ParseError: Parsing was unsuccessful. Please verify that your login credentials are correct.")
         return self.characters
     
-    
+    def _retrieve_stats(self):
+        """
+        Retrieves the logged-in user's statistics and username log. Even though some can be hidden, all statistics are visible (provided you are viewing your own profile.)
+        """
+        retrieve_stat_attributes = scrape(self.session, f"https://toyhou.se/{self.username}/stats", "span", {"class": "custom-control-description ml-1"})
+        retrieve_stat_values = scrape(self.session, f"https://toyhou.se/{self.username}/stats", "dd", {"class": "field-value col-lg-9 col-md-8"})
+        # Because the last-logged-in time is relative to when you're viewing the page (e.g 6 seconds ago, 2 weeks ago), we need to search specifically for the actual date (usually viewable by tooltip).
+        last_logged_in = (BeautifulSoup(self.session.get(f"https://toyhou.se/{self.username}/stats").content, features="lxml")).find("abbr", {"class": "tooltipster datetime"})["title"]
+        for statistic in retrieve_stat_attributes:
+            self.stats.append(statistic.text)
+        for statistic_value in retrieve_stat_values:
+            self.stat_values.append((statistic_value.text).strip())
+        self.stat_values.insert(1, last_logged_in)
+        return dict(zip(self.stats, self.stat_values))
