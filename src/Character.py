@@ -18,12 +18,12 @@ class Character:
         """
         self.id = id
         self.session = session.session
-        self.char_stats = {}
+        self.char_statistics = {}
         self.ownership_log = []
         self.favs = []
         self.comments = []
 
-    def retrieve_char_stats(self):
+    def char_stats(self):
         """
         Obtains information such as:
         - designer and creator of the character (if applicable, considering designer is an optinal field)
@@ -37,12 +37,12 @@ class Character:
         retrieve_char_stat_values[0] = created_date
         for attribute, value in zip(retrieve_char_stat_attributes, retrieve_char_stat_values):
             try:
-                self.char_stats[(attribute.text).strip()] = (value.text).strip()
+                self.char_statistics[(attribute.text).strip()] = (value.text).strip()
             except:
-                self.char_stats[(attribute.text).strip()] = (value).strip()        
-        return self.char_stats
+                self.char_statistics[(attribute.text).strip()] = (value).strip()        
+        return self.char_statistics
     
-    def retrieve_char_log(self):
+    def char_log(self):
         """
         Obtains the ownership log of the character.
         """
@@ -50,12 +50,12 @@ class Character:
         retrieve_char_recipient = scrape(self.session, f"https://toyhou.se/{self.id}./ownership/log", "span", {"class": "display-user"})
         for date, recipient in zip(retrieve_char_transfer_date, retrieve_char_recipient[1:]):
             self.ownership_log.append({
-                "transfer_date": (date.text).strip(),
-                "transfer_recipient": (recipient.text).strip()
+                "Date": (date.text).strip(),
+                "Recipient": (recipient.text).strip()
             })
         return self.ownership_log
 
-    def retrieve_favs(self):
+    def char_favs(self):
         """
         Obtains a list of who favourited the character.
         """
@@ -64,7 +64,7 @@ class Character:
             self.favs.append(favourite.text)
         return self.favs
 
-    def retrieve_comments(self):
+    def char_comments(self):
         """
         Obtains a list of comments, timestamps and their authors.
         """
