@@ -8,20 +8,26 @@ class Character:
     Pulls information about an existing character from its profile ID. 
     Requires an existing authenticated session to access characters who may be authorise/logged-in users only.
     """
-    def __init__(self,id,session):
+    def __init__(self,session, id):
         """
         __init__ method
 
         Arguments: 
-        id (int): Character ID 
         session (Session): Used to access restricted character profiles.
+        id (int): Character ID 
         """
+        self._authenticated = session.authenticated
+        if self._authenticated is False:
+            raise Exception("AuthError: You must be logged in to retrieve information about users")
+        if isinstance(session, Session) != True: 
+            raise ValueError(f"{session} is not of class Session")
         self.id = id
         self.session = session.session
         self.char_statistics = {}
         self.ownership_log = []
         self.favs = []
         self.comments = []
+
 
     def char_stats(self):
         """
@@ -49,10 +55,10 @@ class Character:
         retrieve_char_transfer_date = scrape(self.session, f"https://toyhou.se/{self.id}./ownership/log", "td", {"class": "col-4 col-md-3"})
         retrieve_char_recipient = scrape(self.session, f"https://toyhou.se/{self.id}./ownership/log", "span", {"class": "display-user"})
         for date, recipient in zip(retrieve_char_transfer_date, retrieve_char_recipient[1:]):
-            self.ownership_log.append({
-                "Date": (date.text).strip(),
-                "Recipient": (recipient.text).strip()
-            })
+            self.ownership_log.append(
+                ((date.text).strip(),
+                (recipient.text).strip())
+            )
         return self.ownership_log
 
     def char_favs(self):
