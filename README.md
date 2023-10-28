@@ -20,7 +20,7 @@ session = Session("<username>", "<password>", file_path)
 session.auth()
 ```
 
-> [! Important]
+> [!IMPORTANT]
 > I cannot guarantee that this service works on profiles with extreme custom CSS, legacy layouts or profile warnings! If you want to use this, please manually visit `https://toyhou.se/~account/display` and turn off all three settings under 'Profile Browsing'. In the meantime, I will be attempting to fix that.
 
 ## Functions
@@ -30,6 +30,7 @@ session = Session("<username>", "<password>")
 session.auth()
 ```
 Logs you in to the session using your username and password. This session object is required to access basically everything else! 
+
 ---
 
 ### User
@@ -79,7 +80,7 @@ Retrieves the specified user's **profile picture**, and if `download=True`, **do
 ```python
 user_info.user_designs()
 ```
-Outputs a **list of tuples** in format (<char_name>, <char_id>, <char_url>) for all characters that the user is credited as a designer of. This format is the same as [user_chars()](#user_chars)
+Outputs a **list of tuples** in format `(<char_name>, <char_id>, <char_url>)` for all characters that the user is credited as a designer of. This format is the same as [user_chars()](#user_chars)
 
 ---
 
