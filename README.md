@@ -8,6 +8,9 @@ This is very much a niche project (lol) but I'm hoping it'll serve some use to a
 - [Requests](https://pypi.org/project/requests/)
 - [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/)
 
+## Installation
+You can now use [pip](https://pip.pypa.io/en/stable/) to install this project!
+`pip install toyhouse`
 
 ## Usage
 Start by importing the module, then instantiating the class to 'log in' with your Toyhou.se username and password. This is required for basically all usage, as many profiles/characters are inaccessible to guest users. 
@@ -15,26 +18,27 @@ Start by importing the module, then instantiating the class to 'log in' with you
 `file_path` here is an optional argument - it dictates a folder in which relevant images are saved. For instance, if you want to save a user's profile picture in your Documents folder, you would add `C:/Users/<yourusername>/Documents`, and the profile picture would then be downloaded in the subfolder `/<thatuser>/`. If left blank, the subfolder will be placed in the directory where this code is currently running.
 
 ```python
-from Session import Session
-session = Session("<username>", "<password>", file_path)
+import toyhouse
+session = toyhouse.Session("<username>", "<password>", file_path)
 session.auth()
 ```
 
-> [! Important]
+> [!IMPORTANT]
 > I cannot guarantee that this service works on profiles with extreme custom CSS, legacy layouts or profile warnings! If you want to use this, please manually visit `https://toyhou.se/~account/display` and turn off all three settings under 'Profile Browsing'. In the meantime, I will be attempting to fix that.
 
 ## Functions
 ### Session
 ```python
-session = Session("<username>", "<password>")
+session = toyhouse.Session("<username>", "<password>")
 session.auth()
 ```
 Logs you in to the session using your username and password. This session object is required to access basically everything else! 
+
 ---
 
 ### User
 ```python
-user_info = User(session, "<username>")
+user_info = toyhouse.User(session, "<username>")
 ```
 This creates a new User object, letting you retrieve information about whatever user is listed there. 
 
@@ -79,13 +83,13 @@ Retrieves the specified user's **profile picture**, and if `download=True`, **do
 ```python
 user_info.user_designs()
 ```
-Outputs a **list of tuples** in format (<char_name>, <char_id>, <char_url>) for all characters that the user is credited as a designer of. This format is the same as [user_chars()](#user_chars)
+Outputs a **list of tuples** in format `(<char_name>, <char_id>, <char_url>)` for all characters that the user is credited as a designer of. This format is the same as [user_chars()](#user_chars)
 
 ---
 
 ### Character
 ```python
-char_info = Character(session, characterid)
+char_info = toyhouse.Character(session, characterid)
 ```
 This creates a new Character object, letting you retrieve information about the character profile which corresponds to that ID. 
 

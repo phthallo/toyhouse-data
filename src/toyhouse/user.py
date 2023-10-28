@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-from Session import Session
-from utilities import *
+from .session import *
+from .utilities import *
 import shutil
 import os
 

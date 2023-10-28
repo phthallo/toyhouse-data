@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-from utilities import scrape
-from Session import Session
+from .utilities import *
+from .session import *
 
 class Character:
     """
@@ -70,10 +70,10 @@ class Character:
             self.favs.append(favourite.text)
         return self.favs
 
-    def char_comments(self):
-        """
-        Obtains a list of comments, timestamps and their authors.
-        """
+    #def char_comments(self):
+    #    """
+    #    Obtains a list of comments, timestamps and their authors.
+    #    """
 
     
     
