@@ -10,7 +10,7 @@ This is very much a niche project (lol) but I'm hoping it'll serve some use to a
 
 ## Installation
 You can now use [pip](https://pip.pypa.io/en/stable/) to install this project!
-`pip install toyhouse`
+```pip install toyhouse```
 
 ## Usage
 Start by importing the module, then instantiating the class to 'log in' with your Toyhou.se username and password. This is required for basically all usage, as many profiles/characters are inaccessible to guest users. 
