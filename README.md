@@ -9,13 +9,19 @@ This is very much a niche project (lol) but I'm hoping it'll serve some use to a
 - [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/)
 
 ## Installation
-You can now use [pip](https://pip.pypa.io/en/stable/) to install this project!
-```pip install toyhouse```
+You can now use [pip](https://pip.pypa.io/en/stable/) to install this project! Simply run: 
+
+```
+pip install toyhouse
+```
+> [!IMPORTANT]
+> I cannot guarantee that this service works on profiles with extreme custom CSS, legacy layouts or profile warnings! If you want to use this, please manually visit `https://toyhou.se/~account/display` and turn off all three settings under 'Profile Browsing'. In the meantime, I will be attempting to fix that.
 
 ## Usage
 Start by importing the module, then instantiating the class to 'log in' with your Toyhou.se username and password. This is required for basically all usage, as many profiles/characters are inaccessible to guest users. 
 
-`file_path` here is an optional argument - it dictates a folder in which relevant images are saved. For instance, if you want to save a user's profile picture in your Documents folder, you would add `C:/Users/<yourusername>/Documents`, and the profile picture would then be downloaded in the subfolder `/<thatuser>/`. If left blank, the subfolder will be placed in the directory where this code is currently running.
+`file_path` here is an optional argument - it dictates a folder in which relevant images are saved. 
+For instance, if you want to save a user's profile picture in your Documents folder, you would add `C:/Users/<yourusername>/Documents`, and the profile picture would then be downloaded in the subfolder `/<thatuser>/`. If left blank, the subfolder will be placed in the directory where this code is currently running.
 
 ```python
 import toyhouse
@@ -23,8 +29,6 @@ session = toyhouse.Session("<username>", "<password>", file_path)
 session.auth()
 ```
 
-> [!IMPORTANT]
-> I cannot guarantee that this service works on profiles with extreme custom CSS, legacy layouts or profile warnings! If you want to use this, please manually visit `https://toyhou.se/~account/display` and turn off all three settings under 'Profile Browsing'. In the meantime, I will be attempting to fix that.
 
 ## Functions
 ### Session
