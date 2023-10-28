@@ -1,7 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 from Session import Session
-from utilities import scrape
+from utilities import *
+import shutil
+import os
 
 
 
@@ -26,30 +28,28 @@ class User:
             self.username = username
             self._determine_self = False
         self.session = session.session
-        
+        self.file_path = session.file_path
         self.characters = []
         self.statistics = {}
         self.username_log = []
+        self.designs = []
 
+    def _create_path(self):
+        if self.username in self.file_path:
+            return self.file_path 
+        if self.file_path == "":
+            self.file_path = os.getcwd() + f"/{self.username}"
+        else:
+            self.file_path = self.file_path + f"/{self.username}"
+        if not os.path.exists(self.file_path):
+            os.makedirs(self.file_path)
+        return self.file_path
 
     def user_chars(self):
         """
-        Retrieves the specified user's characters and returns a list containing tuples of format (<char_name>, <char_id>).
+        Retrieves the specified user's characters and returns a list containing tuples of format (<char_name>, <char_id>, <char_url>).
         """
-        try:
-            retrieve_url = self.session.get(f"https://toyhou.se/{self.username}/characters/folder:all")
-            try:
-                max_pages = scrape(self.session, f"https://toyhou.se/{self.username}/characters/folder:all","a", {"class": "page-link"})[-2].text
-            except:
-                max_pages = 1
-            for i in range(1, int(max_pages)+1):
-                retrieve_characters = scrape(self.session, f"https://toyhou.se/{self.username}/characters/folder:all?legacy=0&page={i}","a", {"class": "btn btn-sm btn-primary character-name-badge"})
-                for character in retrieve_characters:
-                    self.characters.append(
-                        ((character.text).strip(), int((character.get('href')[1:]).split('.',1)[0])))
-        except: 
-            raise Exception("ParseError: Parsing was unsuccessful.")
-        return self.characters 
+        return char_object(self.session, f"https://toyhou.se/{self.username}/characters/folder:all", self.characters)
     
 
     def user_stats(self):
@@ -87,7 +87,7 @@ class User:
 
     def user_log(self):
         """
-        Retrieves the logged-in user's previous username log, as a list of dictionaries containing the date of change, previous username and updated name (sorted by most recent change first). 
+        Retrieves the specified user's previous username log, as a list of dictionaries containing the date of change, previous username and updated name (sorted by most recent change first). 
         """
         username_date = scrape(self.session, f"https://toyhou.se/{self.username}/stats/usernames", "abbr", {"class":"tooltipster datetime"})
         username_name = scrape(self.session, f"https://toyhou.se/{self.username}/stats/usernames", "td", {"class": "col-9"})
@@ -100,3 +100,22 @@ class User:
                 } 
             )
         return self.username_log 
+    
+    def user_pic(self, download=False):
+        """
+        Retrieves a link to the specified user's profile picture, and optionally, saves the image. 
+        """
+        user_image = (f"https://f2.toyhou.se/file/f2-toyhou-se/users/{self.username}?15")
+        if download:
+            response = requests.get(user_image, stream=True)
+            with open(User._create_path(self) + f'/{self.username}.png', 'wb') as fout:
+                response.raw.decode_content = True
+                shutil.copyfileobj(response.raw, fout)
+            return f"{self.username} profile picture has been saved at {User._create_path(self)}."
+        return user_image          
+
+    def user_designs(self):
+        """
+        Returns links and information about all characters that the user is credited as a designer of, in the format (<char_name>, <char_id>, <char_url>)
+        """
+        return char_object(self.session, f"https://toyhou.se/{self.username}/created", self.designs)

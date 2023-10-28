@@ -12,11 +12,16 @@ This is very much a niche project (lol) but I'm hoping it'll serve some use to a
 ## Usage
 Start by importing the module, then instantiating the class to 'log in' with your Toyhou.se username and password. This is required for basically all usage, as many profiles/characters are inaccessible to guest users. 
 
+`file_path` here is an optional argument - it dictates a folder in which relevant images are saved. For instance, if you want to save a user's profile picture in your Documents folder, you would add `C:/Users/<yourusername>/Documents`, and the profile picture would then be downloaded in the subfolder `/<thatuser>/`. If left blank, the subfolder will be placed in the directory where this code is currently running.
+
 ```python
 from Session import Session
-session = Session("<username>", "<password>")
+session = Session("<username>", "<password>", file_path)
 session.auth()
 ```
+
+> [! Important]
+> I cannot guarantee that this service works on profiles with extreme custom CSS, legacy layouts or profile warnings! If you want to use this, please manually visit `https://toyhou.se/~account/display` and turn off all three settings under 'Profile Browsing'. In the meantime, I will be attempting to fix that.
 
 ## Functions
 ### Session
@@ -25,7 +30,6 @@ session = Session("<username>", "<password>")
 session.auth()
 ```
 Logs you in to the session using your username and password. This session object is required to access basically everything else! 
-
 ---
 
 ### User
@@ -39,9 +43,9 @@ This creates a new User object, letting you retrieve information about whatever 
 ```python
 user_info.user_chars()
 # Returns 
-[('Althea', 12391***), ('Aster', 21438***), ('Aspen', 4106***)]
+[('Althea', 12391***, 'https://toyhou.se/12391***.althea'), ('Aster', 21438***, 'https://toyhou.se/21438***.aster'), ('Aspen', 4106***, 'https://toyhou.se/4106***.aspen')]
 ```
-Outputs a **list of tuples** containing every **character from that user** accessible to the authorised session, in the form `(<character>, <id>)`.
+Outputs a **list of tuples** containing every **character from that user** accessible to the authorised session, in the form `(<char_name>, <char_id>, <char_url>)`.
 
 #### user_stats()
 ```python
@@ -58,6 +62,24 @@ user_info.user_log()
 [{'date': '6 Nov 2020, **:**:** pm', 'name_from': 'my_old_username', 'name_to': 'my_new_username'}, {'date': '19 Apr 2020, **:**:** am', 'name_from': 'my_oldest_username', 'name_to': 'my_old_username'}]
 ```
 Outputs the specified user's **username change history** as a **list of dictionaries**, with most recent name change first.
+
+#### user_pic()
+```python
+user_info.user_pic(download=True)
+# Returns 
+<username> profile picture has been saved at <path>
+
+user_info.user_pic()
+# Returns
+https://f2.toyhou.se/file/f2-toyhou-se/users/<username>
+```
+Retrieves the specified user's **profile picture**, and if `download=True`, **downloads the image** at the file path mentioned under [Usage](#usage). If `download=False`, it returns the URL at which you can access the profile picture.
+
+#### user_designs()
+```python
+user_info.user_designs()
+```
+Outputs a **list of tuples** in format (<char_name>, <char_id>, <char_url>) for all characters that the user is credited as a designer of. This format is the same as [user_chars()](#user_chars)
 
 ---
 
@@ -107,4 +129,4 @@ Outputs a **list** of all accounts that have the **character favourited**.
 
 - [ ] Test on profiles with custom CSS
 
-- [ ] Add better ways to catch errors (e.g user has no characters, login credentials incorrect)
+- [ ] Add better ways to catch errors (e.g ~~login credentials incorrect~~)
