@@ -1,11 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
-from .session import *
-from .utilities import *
+from toyhouse.session import *
+from toyhouse.utilities import *
 import shutil
 import os
-
-
 
 class User:
     def __init__(self, session, username):
@@ -29,10 +27,12 @@ class User:
             self._determine_self = False
         self.session = session.session
         self.file_path = session.file_path
-        self.characters = []
-        self.statistics = {}
-        self.username_log = []
-        self.designs = []
+        self._characters = []
+        self._statistics = {}
+        self._username_log = []
+        self._designs = []
+        self._fav_folder_list = [("", "", "")]
+        self._fav_list = []
 
     def _create_path(self):
         if self.username in self.file_path:
@@ -44,20 +44,21 @@ class User:
         if not os.path.exists(self.file_path):
             os.makedirs(self.file_path)
         return self.file_path
-
+    
+    @property
     def user_chars(self):
         """
         Retrieves the specified user's characters and returns a list containing tuples of format (<char_name>, <char_id>, <char_url>).
         """
-        return char_object(self.session, f"https://toyhou.se/{self.username}/characters/folder:all", self.characters)
+        return char_object(self.session, f"https://toyhou.se/{self.username}/characters/folder:all", self._characters)
     
-
+    @property
     def user_stats(self):
         """
         Retrieves the specified user's statistics as a dictionary. It will return all statistics (regardless of public view status) recorded provided you are viewing your own profile.
         Else, it will only return the ones marked visible.
         """
-        # Toyhou.se lets people hide specific statistcs, such as the time they last logged in. Furthermore, the /stats page for your own profile versus another person's profile is different.
+        # Toyhou.se lets people hide specific statistics, such as the time they last logged in. Furthermore, the /stats page for your own profile versus another person's profile is different.
         # This is primarily due to stuff like the statistics on your own page being clickable, as well as 'greying out' stats hidden to the public.
         # Unfortunately, this means that we can't exactly use the same code, so we have to quickly check whether the profile we're checking has the same username as the current session.
         # Of course, we could just skip this. However, it's still helpful to obtain all the statistics available.
@@ -80,11 +81,12 @@ class User:
         # This same issue is replicated under Character().char_stats. 
         for statistic, value in zip(retrieve_stat_attributes, retrieve_stat_values):
             try:
-                self.statistics[(statistic.text).strip()] = (value.text).strip()
+                self._statistics[(statistic.text).strip()] = (value.text).strip()
             except: 
-                self.statistics[(statistic.text).strip()] = (value).strip()
-        return self.statistics 
+                self._statistics[(statistic.text).strip()] = (value).strip()
+        return self._statistics 
 
+    @property
     def user_log(self):
         """
         Retrieves the specified user's previous username log, as a list of dictionaries containing the date of change, previous username and updated name (sorted by most recent change first). 
@@ -92,14 +94,14 @@ class User:
         username_date = scrape(self.session, f"https://toyhou.se/{self.username}/stats/usernames", "abbr", {"class":"tooltipster datetime"})
         username_name = scrape(self.session, f"https://toyhou.se/{self.username}/stats/usernames", "td", {"class": "col-9"})
         for date, name in zip(username_date, username_name):
-            self.username_log.append(
+            self._username_log.append(
                 {
                     "date": username_date[username_date.index(date)]["title"],
                     "name_from": (name.text.strip()).split(" to ")[0],
                     "name_to": (name.text.strip()).split(" to ")[1]
                 } 
             )
-        return self.username_log 
+        return self._username_log 
     
     def user_pic(self, download=False):
         """
@@ -114,8 +116,32 @@ class User:
             return f"{self.username} profile picture has been saved at {User._create_path(self)}."
         return user_image          
 
+    @property
     def user_designs(self):
         """
         Returns links and information about all characters that the user is credited as a designer of, in the format (<char_name>, <char_id>, <char_url>)
         """
-        return char_object(self.session, f"https://toyhou.se/{self.username}/created", self.designs)
+        return char_object(self.session, f"https://toyhou.se/{self.username}/created", self._designs)
+    
+    @property
+    def user_favs(self):
+        """ 
+        Returns information about the characters the user has favourited, as well as the folder they are located in.
+        """
+        # The scraper first needs to check the 'main' folders; that is, the ones that are visible directly on the favorites page. 
+        # It will then go inside each folder isolated in _fav_folder_list and iterate within those folders, searching for more subfolders and adding them if found. It continues until there are no more subfolders to be found.
+        # This is why the self.fav_folder_list begins containing a single tuple with all "" elements, as this represents the /favorites/ folder.
+        for folder in self._fav_folder_list:
+            _fav_subfolders = scrape(self.session, f"https://toyhou.se/{self.username}/favorites/{folder[1]}", "a", {"class": "characters-folder child btn btn-default form-control"})
+            _fav_subfolders_name = scrape(self.session, f"https://toyhou.se/{self.username}/favorites/{folder[1]}", "div", {"class": "characters-folder-name"})
+            for folder, folder_name in zip( _fav_subfolders, _fav_subfolders_name): 
+                self._fav_folder_list.append((
+                    folder["href"],
+                    folder["id"][7:],
+                    folder_name.text
+                ))
+        # Now, it's time for the fun stuff. People on Toyhou.se tend to have a lot of favourited characters... Optimally, threading of some sort would be used to speed up time spent on this task.
+        for folder in self._fav_folder_list:
+            char_object(self.session, f"https://toyhou.se/{self.username}/favorites/{folder[1]}", self._fav_list, folder[0])
+
+        return self._fav_list
