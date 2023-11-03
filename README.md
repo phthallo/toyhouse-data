@@ -14,14 +14,17 @@ You can now use [pip](https://pip.pypa.io/en/stable/) to install this project! S
 ```
 pip install toyhouse
 ```
+This project can also be found [here](https://pypi.org/project/toyhouse/), albeit slightly out of date.
+
 > [!IMPORTANT]
 > I cannot guarantee that this service works on profiles with extreme custom CSS, legacy layouts or profile warnings! If you want to use this, please manually visit `https://toyhou.se/~account/display` and turn off all three settings under 'Profile Browsing'. In the meantime, I will be attempting to fix that.
 
 ## Usage
 Start by importing the module, then instantiating the class to 'log in' with your Toyhou.se username and password. This is required for basically all usage, as many profiles/characters are inaccessible to guest users. 
 
-`file_path` here is an optional argument - it dictates a folder in which relevant images are saved. 
-For instance, if you want to save a user's profile picture in your Documents folder, you would add `C:/Users/<yourusername>/Documents`, and the profile picture would then be downloaded in the subfolder `/<thatuser>/`. If left blank, the subfolder will be placed in the directory where this code is currently running.
+*`file_path` here is an optional argument - it dictates a folder in which relevant images are saved.*
+
+*For instance, if you want to save a user's profile picture in your Documents folder, you would add `C:/Users/<yourusername>/Documents`, and the profile picture would then be downloaded in the subfolder `/<thatuser>/`. If left blank, the subfolder will be placed in the directory where this code is currently running.*
 
 ```python
 import toyhouse
@@ -77,7 +80,7 @@ user_info.user_pic(download=True)
 # Returns 
 <username> profile picture has been saved at <path>
 
-user_info.user_pic
+user_info.user_pic()
 # Returns
 https://f2.toyhou.se/file/f2-toyhou-se/users/<username>
 ```
@@ -94,7 +97,9 @@ Outputs a **list of tuples** in format `(<char_name>, <char_id>, <char_url>)` fo
 ```python
 user_info.user_favs
 ```
-Outputs a **list of tuples** in format `(<char_name>, <char_id>, <char_url>, <fav_folder>)` for all characters that the user has favourited. This format is identical to the above, except with the addition of the `<fav_folder>` (the URL of the folder in which the favourite character is located in, presented as `https://toyhou.se/<username>/favorites/<folder_id>`) 
+Outputs a **list of tuples** in format `(<char_name>, <char_id>, <char_url>, <fav_folder>)` for all **characters that the user has favourited**. 
+
+This format is identical to the above, except with the addition of the `<fav_folder>` (the URL of the folder in which the favourite character is located in, presented as `https://toyhou.se/<username>/favorites/<folder_id>`) 
 
 ---
 
