@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 from toyhouse.session import *
 from toyhouse.utilities import *
 import shutil
-import os
 
 class User:
     def __init__(self, session, username):
@@ -14,11 +13,8 @@ class User:
         session (Session): Used to access restricted user profiles.
         username (str): Username of profile to access.
         """
-        self._authenticated = session.authenticated
-        if self._authenticated is False:
-            raise Exception("AuthError: You must be logged in to retrieve information about users")
-        if isinstance(session, Session) != True: 
-            raise ValueError(f"{session} is not of class Session")
+        if isinstance(session, Session) != True and isinstance(session, GuestSession) != True: 
+            raise ValueError(f"{session} is not of class Session or GuestSession")
         if username == session.username:
             self.username = session.username
             self._determine_self = True
@@ -31,29 +27,21 @@ class User:
         self._statistics = {}
         self._username_log = []
         self._designs = []
-        self._fav_folder_list = [("", "", "")]
         self._fav_list = []
 
-    def _create_path(self):
-        if self.username in self.file_path:
-            return self.file_path 
-        if self.file_path == "":
-            self.file_path = os.getcwd() + f"/{self.username}"
-        else:
-            self.file_path = self.file_path + f"/{self.username}"
-        if not os.path.exists(self.file_path):
-            os.makedirs(self.file_path)
-        return self.file_path
+
     
     @property
-    def user_chars(self):
+    def chars(self):
         """
         Retrieves the specified user's characters and returns a list containing tuples of format (<char_name>, <char_id>, <char_url>).
         """
-        return char_object(self.session, f"https://toyhou.se/{self.username}/characters/folder:all", self._characters)
+        for folder in folder_search(self.session, f"https://toyhou.se/{self.username}/characters"):
+            char_object(self.session, folder[0], self._characters)
+        return self._characters
     
     @property
-    def user_stats(self):
+    def stats(self):
         """
         Retrieves the specified user's statistics as a dictionary. It will return all statistics (regardless of public view status) recorded provided you are viewing your own profile.
         Else, it will only return the ones marked visible.
@@ -87,7 +75,7 @@ class User:
         return self._statistics 
 
     @property
-    def user_log(self):
+    def log(self):
         """
         Retrieves the specified user's previous username log, as a list of dictionaries containing the date of change, previous username and updated name (sorted by most recent change first). 
         """
@@ -103,45 +91,32 @@ class User:
             )
         return self._username_log 
     
-    def user_pic(self, download=False):
+    def pic(self, download=False):
         """
         Retrieves a link to the specified user's profile picture, and optionally, saves the image. 
         """
         user_image = (f"https://f2.toyhou.se/file/f2-toyhou-se/users/{self.username}?15")
         if download:
             response = requests.get(user_image, stream=True)
-            with open(User._create_path(self) + f'/{self.username}.png', 'wb') as fout:
+            with open(create_path(self.username, self.file_path) + f'/{self.username}.png', 'wb') as fout:
                 response.raw.decode_content = True
                 shutil.copyfileobj(response.raw, fout)
-            return f"{self.username} profile picture has been saved at {User._create_path(self)}."
+            return f"{self.username} profile picture has been saved at {create_path(self.username, self.file_path)}."
         return user_image          
 
     @property
-    def user_designs(self):
+    def designs(self):
         """
         Returns links and information about all characters that the user is credited as a designer of, in the format (<char_name>, <char_id>, <char_url>)
         """
         return char_object(self.session, f"https://toyhou.se/{self.username}/created", self._designs)
     
     @property
-    def user_favs(self):
+    def favs(self):
+        
         """ 
         Returns information about the characters the user has favourited, as well as the folder they are located in.
         """
-        # The scraper first needs to check the 'main' folders; that is, the ones that are visible directly on the favorites page. 
-        # It will then go inside each folder isolated in _fav_folder_list and iterate within those folders, searching for more subfolders and adding them if found. It continues until there are no more subfolders to be found.
-        # This is why the self.fav_folder_list begins containing a single tuple with all "" elements, as this represents the /favorites/ folder.
-        for folder in self._fav_folder_list:
-            _fav_subfolders = scrape(self.session, f"https://toyhou.se/{self.username}/favorites/{folder[1]}", "a", {"class": "characters-folder child btn btn-default form-control"})
-            _fav_subfolders_name = scrape(self.session, f"https://toyhou.se/{self.username}/favorites/{folder[1]}", "div", {"class": "characters-folder-name"})
-            for folder, folder_name in zip( _fav_subfolders, _fav_subfolders_name): 
-                self._fav_folder_list.append((
-                    folder["href"],
-                    folder["id"][7:],
-                    folder_name.text
-                ))
-        # Now, it's time for the fun stuff. People on Toyhou.se tend to have a lot of favourited characters... Optimally, threading of some sort would be used to speed up time spent on this task.
-        for folder in self._fav_folder_list:
-            char_object(self.session, f"https://toyhou.se/{self.username}/favorites/{folder[1]}", self._fav_list, folder[0])
-
+        for folder in folder_search(self.session, f"https://toyhou.se/{self.username}/favorites"):
+            char_object(self.session, folder[0], self._fav_list)
         return self._fav_list

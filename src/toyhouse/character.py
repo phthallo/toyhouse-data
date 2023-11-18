@@ -16,11 +16,11 @@ class Character:
         session (Session): Used to access restricted character profiles.
         id (int): Character ID 
         """
-        self._authenticated = session.authenticated
-        if self._authenticated is False:
-            raise Exception("AuthError: You must be logged in to retrieve information about users")
-        if isinstance(session, Session) != True: 
-            raise ValueError(f"{session} is not of class Session")
+        #self._authenticated = session.authenticated
+        #if self._authenticated is False:
+        #    raise Exception("AuthError: You must be logged in to retrieve information about users")
+        if isinstance(session, Session) != True and isinstance(session, GuestSession) != True: 
+            raise ValueError(f"{session} is not of class Session or GuestSession")
         self.id = id
         self.session = session.session
         self._char_statistics = {}
@@ -29,7 +29,7 @@ class Character:
         self._comments = []
 
     @property
-    def char_stats(self):
+    def stats(self):
         """
         Obtains information such as:
         - designer and creator of the character (if applicable, considering designer is an optinal field)
@@ -49,7 +49,7 @@ class Character:
         return self._char_statistics
     
     @property
-    def char_log(self):
+    def log(self):
         """
         Obtains the ownership log of the character.
         """
@@ -63,7 +63,7 @@ class Character:
         return self._ownership_log
 
     @property
-    def char_favs(self):
+    def favs(self):
         """
         Obtains a list of who favourited the character.
         """
@@ -73,7 +73,7 @@ class Character:
         return self._favs
 
     @property
-    def char_content(self):
+    def content(self):
         """
         Obtains the raw content of the character's profile. 
         """
@@ -84,6 +84,11 @@ class Character:
     #    """
     #    Obtains a list of comments, timestamps and their authors.
     #    """
+
+    def gallery(self):
+        """
+        Retrieves links to all images in the character's gallery, and optionally, saves the images. 
+        """
 
     
     

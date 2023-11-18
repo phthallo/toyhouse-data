@@ -16,7 +16,6 @@ class Session:
         file_path (str, optional): Location to save images downloaded using this session. Images will save in a subfolder in this location under the user and/or character's name.
         """
         self.session = requests.Session()
-        self.authenticated = False
         self.username = username
         self.password = password
         self.file_path = file_path
@@ -34,9 +33,19 @@ class Session:
             self.authenticated = True
             return "Authenticated as " + self.username
         elif "You have failed to login too many times" in post.text:
-            raise Exception("AuthError: You have been ratelimited. Please try again in a few minutes.")
+            raise Exception("You have been ratelimited. Please try again in a few minutes.")
         else:
             raise ValueError("Authentication unsuccessful. Please recheck your login credentials.")
-        
-        
+
+class GuestSession():
+    """Establishes a new Toyhouse Guest Session to access public threads and profiles."""
+    def __init__(self, file_path=""):
+        self.session = requests.Session()
+        self.file_path = file_path
+        self.session.verify = False
+        self.username = ""
+        self.password = ""
+        self.file_path = file_path
+
+    
    
