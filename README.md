@@ -1,5 +1,5 @@
 # Toyhouse Data
-[work in progress] A Toyhouse service to retrieve data about your (and other people's) OCs, as well as your (and other people's) profiles. 
+[work in progress] An API wrapper for the site Toyhou.se to retrieve data about user profiles, character profiles, forum posts and more.
 
 This is very much a niche project (lol) but I'm hoping it'll serve some use to anyone curious!
 
@@ -12,7 +12,7 @@ This is very much a niche project (lol) but I'm hoping it'll serve some use to a
 You can now use [pip](https://pip.pypa.io/en/stable/) to install this project! Simply run:
 
 ```
-pip install toyhouse
+py -m pip install toyhouse
 ```
 
 This project can be found [here](https://pypi.org/project/toyhouse/), albeit slightly out of date.
@@ -37,6 +37,8 @@ session.auth()
 session = toyhouse.GuestSession("<file_path>")
 ```
 
+## Examples
+If you don't care about the docs and just want to know how you can use this, see the [Snippets page](/snippets.md).
 
 ## Functions
 ### Session
@@ -50,7 +52,7 @@ Starts a new logged-in Session using the credentials above, letting you access i
 ```python
 session = toyhouse.GuestSession()
 ```
-Starts a new Guest Session. No authentication is required.
+Starts a new Guest Session. No authentication is required, but you will be limited to only publicly viewable data. 
 
 ---
 
@@ -101,7 +103,7 @@ Retrieves the specified user's **profile picture**, and if `download=True`, **do
 ```python
 user_info.designs
 ```
-Outputs a **list of tuples** in format `(<char_name>, <char_id>, <char_url>, <char_loc>)` for all characters that the user is credited as a designer of. This format is the same as [chars()](#chars) except with `<char_loc` returning the URL + page number that the character is on.
+Outputs a **list of tuples** in format `(<char_name>, <char_id>, <char_url>, <char_loc>)` for all characters that the user is credited as a designer of. This format is the same as [chars()](#chars) except with `<char_loc>` returning the URL + page number that the character is on.
 
 
 #### favs
@@ -142,6 +144,20 @@ char_info.favs
 ['i_favourited_this_character', 'i_did_too', 'i_did_as_well']
 ```
 Outputs a **list** of all accounts that have the **character favourited**.
+
+### Forum
+
+```python
+forum_info = toyhouse.Forum(session, forumboardid)
+```
+Creates a new Forum object, letting you retrieve information about Forum boards and their posts. 
+
+#### threads
+```python
+forum_info.threads
+```
+
+Outputs a **list of tuples** in format `[(thread_title, thread_author, thread_creation_date)]` for the threads on the first page of a specific forum board. There is currently no distinguishing between pinned threads and standard threads. 
 
 ---
 ## To-Do List

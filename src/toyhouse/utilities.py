@@ -16,7 +16,7 @@ def scrape(session, url, tag, class_attr, all=True):
 
 
 # Some illegal characters are present in the character's name (as in they are illegal in URLs). If they're kept in, it will break that link.
-def strip_illegal(phrase):
+def sanitise(phrase):
     for character in phrase: 
         if character in """\/:*?"<>|() """:
             phrase = phrase.replace(character,"-")
@@ -44,7 +44,7 @@ def char_object(session, url, output):
             output.append(
                 ((character.text).strip(), 
                     int((character.get('href')[1:]).split('.',1)[0]),
-                    f"https://toyhou.se/{int((character.get('href')[1:]).split('.',1)[0])}." + strip_illegal((character.text).strip()),
+                    f"https://toyhou.se/{int((character.get('href')[1:]).split('.',1)[0])}." + sanitise((character.text).strip()),
                     f"{url}?page={i}"
                     ))
     return output 
