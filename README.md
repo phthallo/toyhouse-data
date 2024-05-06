@@ -145,6 +145,8 @@ char_info.favs
 ```
 Outputs a **list** of all accounts that have the **character favourited**.
 
+---
+
 ### Forum
 
 ```python

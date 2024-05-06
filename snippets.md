@@ -20,4 +20,4 @@ print(usercomparison(user1_favs, user2_chars))
 ```
 This snippet can be used to produce a list of a user's characters that have been favourited by another user, and will produce a link to where the character can be found in their favourites (relevant if the user sorts their favourited characters in different folders). 
 
-You may wish to use this to see whether another user has taken interest in your own characters. In that case, substitute `<user1>` for their username and `user2` for your own username.
+You may wish to use this to see whether another user has taken interest in your own characters. In that case, substitute `<user1>` for their username and `<user2>` for your own username.
