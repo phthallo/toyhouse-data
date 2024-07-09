@@ -18,11 +18,11 @@ def scrape(session, url, tag, class_attr, all=True):
 # Some illegal characters are present in the character's name (as in they are illegal in URLs). If they're kept in, it will break that link.
 def sanitise(phrase):
     for character in phrase: 
-        if character in """\/:*?"<>|() """:
+        if character in r"""\/:*?"<>|() """:
             phrase = phrase.replace(character,"-")
         elif character not in string.ascii_letters and character not in string.digits:
             phrase = phrase.replace(character, "")
-    phrase = re.sub('\-\-+', '-', phrase)
+    phrase = re.sub(r'\-\-+', '-', phrase)
     return phrase.lower()
 # FIX THIS TO REMOVE THE TRAILING DASH IF THE LAST CHARACTER IS ILLEGAL
 # Note: Low priority. Links still work with the trailing dash.

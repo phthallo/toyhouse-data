@@ -3,6 +3,10 @@
 
 This is very much a niche project (lol) but I'm hoping it'll serve some use to anyone curious!
 
+
+> [!IMPORTANT]
+> This project is currently not usable, as Toyhou.se staff have implemented [measures against bots following account breaches and unsolicited spam](https://toyhou.se/~forums/18.announcements/519922.sec-regarding-recent-account-breaches). 
+
 ## Prerequisites
 - [Python3](https://www.python.org/downloads/)
 - [Requests](https://pypi.org/project/requests/)
